@@ -14,7 +14,14 @@
 #
 class sudo (
 ) {
-  package [ 'sudo':
+  package { [ sudo, libsss_sudo ]:
     ensure => latest,
+  }
+  augeas { 'nsswitch enable sudo':
+    context => "/files/etc/nsswitch.conf",
+    changes => [
+      "set database[. = 'sudoers'] sudoers",
+      "set database[. = 'sudoers']/service[1] sss",
+    ],
   }
 }
