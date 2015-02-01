@@ -14,7 +14,7 @@
 #
 class sudo (
 ) {
-  package { [ sudo, libsss_sudo ]:
+  package { sudo:
     ensure => latest,
   }
   augeas { 'nsswitch enable sudo':
