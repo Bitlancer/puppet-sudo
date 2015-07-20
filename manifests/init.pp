@@ -13,15 +13,25 @@
 # Bitlancer LLC (contact@bitlancer.com)
 #
 class sudo (
+  $sources        = ["files", "sss"],
+  $package_name   = 'sudo',
+  $package_ensure = 'latest'
 ) {
-  package { sudo:
-    ensure => latest,
+
+  if is_array($sources) {
+    $_sources = join($sources, ' ')
   }
-  augeas { 'nsswitch enable sudo':
-    context => "/files/etc/nsswitch.conf",
-    changes => [
-      "set database[. = 'sudoers'] sudoers",
-      "set database[. = 'sudoers']/service[1] sss",
-    ],
+  else {
+    $_sources = $sources
+  }
+
+  package { $package_name:
+    ensure => $package_ensure
+  }
+
+  file_line { 'nsswitch sudo entries':
+    path  => '/etc/nsswitch.conf',
+    line  => "sudoers: ${_sources}",
+    match => "^sudoers.*"
   }
 }
